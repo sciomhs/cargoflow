@@ -40,6 +40,6 @@ test('детали и модалки не становятся лишними в
 test('существуют ровно 22 экрана ТЗ без служебных redirect-маршрутов', () => {
   const files = readdirSync(new URL('../app/', import.meta.url), { recursive: true });
   const screens = files.filter((name) => name.endsWith('.tsx') && !name.endsWith('_layout.tsx')
-    && name !== 'index.tsx' && name !== 'trip/[id].tsx');
+    && !name.startsWith('(dev)/') && name !== 'index.tsx' && name !== 'trip/[id].tsx');
   assert.equal(screens.length, 22);
 });

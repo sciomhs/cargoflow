@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "scheme": "cargoflow",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "web": {
       "bundler": "metro",
       "output": "static"
@@ -15,7 +15,10 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#FFFFFF"
+          "backgroundColor": "#F4F2EE",
+          "dark": {
+            "backgroundColor": "#141311"
+          }
         }
       ]
     ],

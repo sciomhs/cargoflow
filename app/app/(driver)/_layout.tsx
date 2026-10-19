@@ -1,10 +1,11 @@
 import { Stack } from 'expo-router';
 
-import { screenOptions } from '@/navigation/options';
+import { useScreenOptions } from '@/navigation/options';
 
 export const unstable_settings = { anchor: '(tabs)' };
 
 export default function DriverLayout() {
+  const screenOptions = useScreenOptions();
   return (
     <Stack screenOptions={screenOptions}>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />

@@ -1,6 +1,8 @@
 import { Link, type Href } from 'expo-router';
-import { Pressable, ScrollView, Text } from 'react-native';
+import { ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Row } from '@/ui';
+import { spacing } from '@/ui/tokens';
 
 type Destination = { label: string; href: Href };
 
@@ -9,18 +11,15 @@ export default function NavigationLinks({ links }: { links: Destination[] }) {
   const insets = useSafeAreaInsets();
   return (
     <ScrollView
-      className="flex-1 bg-white"
-      contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: insets.bottom + 16 }}>
+      className="flex-1 bg-background"
+      contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingBottom: insets.bottom + spacing.lg }}>
       {links.map(({ label, href }) => (
         <Link key={label} href={href} asChild>
-          <Pressable
+          <Row
             accessibilityRole="link"
             accessibilityLabel={label}
-            className="min-h-14 justify-center border-b border-stone-300 py-4 active:bg-stone-100">
-            <Text className="text-base text-stone-900" style={{ fontFamily: 'IBMPlexSans_400Regular' }}>
-              {label}
-            </Text>
-          </Pressable>
+            label={label}
+          />
         </Link>
       ))}
     </ScrollView>

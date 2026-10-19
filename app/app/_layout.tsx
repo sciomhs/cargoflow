@@ -4,19 +4,20 @@ import 'react-native-reanimated';
 import { IBMPlexMono_400Regular } from '@expo-google-fonts/ibm-plex-mono';
 import { IBMPlexSans_400Regular, IBMPlexSans_500Medium } from '@expo-google-fonts/ibm-plex-sans';
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
+import { DefaultTheme, ThemeProvider as NavigationThemeProvider, Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
-import { Text, View } from 'react-native';
+import { Text as NativeText, View } from 'react-native';
 
 import { useSession } from '@/store/session';
-import { screenOptions } from '@/navigation/options';
+import { useScreenOptions } from '@/navigation/options';
+import { ThemeProvider, useTheme } from '@/ui/theme';
+import { palettes } from '@/ui/tokens';
 
 void SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const role = useSession((state) => state.role);
   const [loaded, error] = useFonts({
     IBMPlexSans_400Regular,
     IBMPlexSans_500Medium,
@@ -29,21 +30,37 @@ export default function RootLayout() {
 
   if (error) {
     return (
-      <View className="flex-1 justify-center bg-white p-4">
-        <Text accessibilityRole="alert">
+      <View style={{ flex: 1, justifyContent: 'center', padding: 16, backgroundColor: palettes.light.background }}>
+        <NativeText accessibilityRole="alert">
           Не удалось загрузить шрифты. Перезапустите приложение.
-        </Text>
+        </NativeText>
       </View>
     );
   }
   if (!loaded) return null;
 
+  return <ThemeProvider><AppNavigator /></ThemeProvider>;
+}
+
+function AppNavigator() {
+  const role = useSession((state) => state.role);
+  const { mode, colors } = useTheme();
+  const screenOptions = useScreenOptions();
+  const navigationTheme = {
+    ...DefaultTheme,
+    dark: mode === 'dark',
+    colors: { ...DefaultTheme.colors, background: colors.background, card: colors.background,
+      text: colors.text, border: colors.border, primary: colors.accentText, notification: colors.delay },
+  };
   return (
-    <>
-      <StatusBar style="dark" />
-      <Stack screenOptions={{ headerShown: false }}>
+    <NavigationThemeProvider value={navigationTheme}>
+      <StatusBar style={mode === 'dark' ? 'light' : 'dark'} />
+      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.background } }}>
         <Stack.Screen name="index" />
         <Stack.Screen name="trip/[id]" />
+        <Stack.Protected guard={__DEV__ && role !== null}>
+          <Stack.Screen name="(dev)" />
+        </Stack.Protected>
         <Stack.Protected guard={role !== null}>
           <Stack.Screen name="settings" options={{ ...screenOptions, headerShown: true, title: 'Настройки' }} />
         </Stack.Protected>
@@ -63,6 +80,6 @@ export default function RootLayout() {
           <Stack.Screen name="(manager)" />
         </Stack.Protected>
       </Stack>
-    </>
+    </NavigationThemeProvider>
   );
 }

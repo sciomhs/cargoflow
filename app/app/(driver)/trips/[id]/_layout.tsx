@@ -1,10 +1,11 @@
 import { Stack } from 'expo-router';
 
-import { screenOptions, modalOptions } from '@/navigation/options';
+import { useScreenOptions, modalOptions } from '@/navigation/options';
 
 export const unstable_settings = { anchor: 'index' };
 
 export default function DriverTripLayout() {
+  const screenOptions = useScreenOptions();
   return (
     <Stack screenOptions={screenOptions}>
       <Stack.Screen name="index" options={{ title: 'Рейс' }} />

@@ -1,10 +1,11 @@
 import { Stack } from 'expo-router';
 
-import { screenOptions, HeaderActions } from '@/navigation/options';
+import { useScreenOptions, HeaderActions } from '@/navigation/options';
 
 export const unstable_settings = { anchor: 'dashboard' };
 
 export default function ManagerLayout() {
+  const screenOptions = useScreenOptions();
   return (
     <Stack screenOptions={screenOptions}>
       <Stack.Screen name="dashboard" options={{ title: 'Обзор', headerRight: () => <HeaderActions /> }} />
