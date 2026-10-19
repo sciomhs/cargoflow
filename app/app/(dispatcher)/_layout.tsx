@@ -1,32 +1,18 @@
-import { Tabs } from 'expo-router/js-tabs';
-import { Truck, ClipboardList, CircleAlert } from 'lucide-react-native';
+import { Stack } from 'expo-router';
 
-import { tabOptions } from '@/navigation/options';
+import { screenOptions, modalOptions } from '@/navigation/options';
+
+export const unstable_settings = { anchor: '(tabs)' };
 
 export default function DispatcherLayout() {
   return (
-    <Tabs initialRouteName="trips" screenOptions={tabOptions}>
-      <Tabs.Screen
-        name="trips"
-        options={{
-          title: 'Рейсы',
-          tabBarIcon: ({ color }) => <Truck color={color} size={20} strokeWidth={1.75} />,
-        }}
-      />
-      <Tabs.Screen
-        name="orders"
-        options={{
-          title: 'Заказы',
-          tabBarIcon: ({ color }) => <ClipboardList color={color} size={20} strokeWidth={1.75} />,
-        }}
-      />
-      <Tabs.Screen
-        name="attention"
-        options={{
-          title: 'Внимание',
-          tabBarIcon: ({ color }) => <CircleAlert color={color} size={20} strokeWidth={1.75} />,
-        }}
-      />
-    </Tabs>
+    <Stack screenOptions={screenOptions}>
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen name="trips/[id]" options={{ title: 'Рейс' }} />
+      <Stack.Screen name="orders/[id]" options={{ title: 'Заказ' }} />
+      <Stack.Screen name="problems/[id]" options={{ title: 'Проблема' }} />
+      <Stack.Screen name="orders/new" options={{ ...modalOptions, title: 'Новый заказ' }} />
+      <Stack.Screen name="trips/new" options={{ ...modalOptions, title: 'Новый рейс' }} />
+    </Stack>
   );
 }

@@ -1,14 +1,17 @@
 import { Check } from 'lucide-react-native';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { demoUsers, type Role, useSession } from '@/store/session';
+import { tripDestination } from '@/navigation/routes';
 
 export default function LoginScreen() {
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
   const signIn = useSession((state) => state.signIn);
   const insets = useSafeAreaInsets();
+  const { trip } = useLocalSearchParams<{ trip?: string | string[] }>();
 
   return (
     <SafeAreaView className="flex-1 bg-white" edges={['top', 'left', 'right']}>
@@ -47,7 +50,13 @@ export default function LoginScreen() {
             accessibilityLabel="Войти"
             accessibilityState={{ disabled: selectedRole === null }}
             disabled={selectedRole === null}
-            onPress={() => { if (selectedRole) signIn(selectedRole); }}
+            onPress={() => {
+              if (!selectedRole) return;
+              signIn(selectedRole);
+              if (typeof trip === 'string' && trip.length > 0) {
+                router.replace(tripDestination(selectedRole, trip), { withAnchor: true });
+              }
+            }}
             className="min-h-14 items-center justify-center rounded-[6px] bg-stone-900 px-4 py-4 active:opacity-70 disabled:opacity-40">
             <Text
               maxFontSizeMultiplier={1.3}

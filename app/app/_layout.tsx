@@ -11,6 +11,7 @@ import { useEffect } from 'react';
 import { Text, View } from 'react-native';
 
 import { useSession } from '@/store/session';
+import { screenOptions } from '@/navigation/options';
 
 void SplashScreen.preventAutoHideAsync();
 
@@ -42,6 +43,10 @@ export default function RootLayout() {
       <StatusBar style="dark" />
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="index" />
+        <Stack.Screen name="trip/[id]" />
+        <Stack.Protected guard={role !== null}>
+          <Stack.Screen name="settings" options={{ ...screenOptions, headerShown: true, title: 'Настройки' }} />
+        </Stack.Protected>
         <Stack.Protected guard={role === null}>
           <Stack.Screen name="(auth)" />
         </Stack.Protected>

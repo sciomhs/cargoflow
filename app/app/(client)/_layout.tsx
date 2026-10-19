@@ -1,25 +1,14 @@
-import { Tabs } from 'expo-router/js-tabs';
-import { Package, Bell } from 'lucide-react-native';
+import { Stack } from 'expo-router';
 
-import { tabOptions } from '@/navigation/options';
+import { screenOptions } from '@/navigation/options';
+
+export const unstable_settings = { anchor: '(tabs)' };
 
 export default function ClientLayout() {
   return (
-    <Tabs initialRouteName="deliveries" screenOptions={tabOptions}>
-      <Tabs.Screen
-        name="deliveries"
-        options={{
-          title: 'Доставки',
-          tabBarIcon: ({ color }) => <Package color={color} size={20} strokeWidth={1.75} />,
-        }}
-      />
-      <Tabs.Screen
-        name="notifications"
-        options={{
-          title: 'Уведомления',
-          tabBarIcon: ({ color }) => <Bell color={color} size={20} strokeWidth={1.75} />,
-        }}
-      />
-    </Tabs>
+    <Stack screenOptions={screenOptions}>
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen name="deliveries/[id]" options={{ title: 'Доставка' }} />
+    </Stack>
   );
 }

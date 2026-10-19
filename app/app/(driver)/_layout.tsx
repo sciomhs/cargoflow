@@ -1,25 +1,14 @@
-import { Tabs } from 'expo-router/js-tabs';
-import { Truck, History } from 'lucide-react-native';
+import { Stack } from 'expo-router';
 
-import { tabOptions } from '@/navigation/options';
+import { screenOptions } from '@/navigation/options';
+
+export const unstable_settings = { anchor: '(tabs)' };
 
 export default function DriverLayout() {
   return (
-    <Tabs initialRouteName="today" screenOptions={tabOptions}>
-      <Tabs.Screen
-        name="today"
-        options={{
-          title: 'Сегодня',
-          tabBarIcon: ({ color }) => <Truck color={color} size={20} strokeWidth={1.75} />,
-        }}
-      />
-      <Tabs.Screen
-        name="history"
-        options={{
-          title: 'История',
-          tabBarIcon: ({ color }) => <History color={color} size={20} strokeWidth={1.75} />,
-        }}
-      />
-    </Tabs>
+    <Stack screenOptions={screenOptions}>
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen name="trips/[id]" options={{ headerShown: false }} />
+    </Stack>
   );
 }
