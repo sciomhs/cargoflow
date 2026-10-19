@@ -1,0 +1,26 @@
+{
+  "expo": {
+    "name": "CargoFlow",
+    "slug": "cargoflow",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "cargoflow",
+    "userInterfaceStyle": "light",
+    "web": {
+      "bundler": "metro",
+      "output": "static"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#FFFFFF"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
