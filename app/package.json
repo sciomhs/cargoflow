@@ -32,7 +32,8 @@
     "eslint": "^9.39.5",
     "eslint-config-expo": "~57.0.2",
     "tailwindcss": "^3.4.17",
-    "typescript": "~6.0.3"
+    "typescript": "~6.0.3",
+    "vitest": "^5.0.5"
   },
   "scripts": {
     "start": "expo start",
@@ -40,7 +41,8 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "lint": "expo lint",
-    "test": "node --test tests/*.test.mjs"
+    "test": "node --test tests/*.test.mjs && npm run test:domain",
+    "test:domain": "vitest run tests/statusMachine.test.ts"
   },
   "private": true
 }
