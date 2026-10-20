@@ -9,6 +9,38 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      command_log: {
+        Row: {
+          action_id: string
+          actor_id: string
+          created_at: string
+          kind: string
+          trip_id: string | null
+        }
+        Insert: {
+          action_id: string
+          actor_id: string
+          created_at?: string
+          kind: string
+          trip_id?: string | null
+        }
+        Update: {
+          action_id?: string
+          actor_id?: string
+          created_at?: string
+          kind?: string
+          trip_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "command_log_actor_id_fkey"
+            columns: ["actor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       companies: {
         Row: {
           created_at: string
@@ -589,6 +621,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      apply_command: { Args: { command: Json }; Returns: Json }
       my_company: { Args: never; Returns: string }
       my_role: {
         Args: never

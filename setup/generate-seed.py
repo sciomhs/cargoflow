@@ -22,22 +22,22 @@ today = ['assigned']*5 + ['in_transit']*13 + ['at_delivery']*3 + ['in_transit']*
 history = ['completed']*417 + ['in_transit']*22 + ['cancelled']*4 + ['assigned']*7 + ['unloading']*9
 for i,status in enumerate(today + history):
     day = '2026-10-21' if i<27 else (datetime(2026,10,20)-timedelta(days=(i-27)%29)).date().isoformat()
-    if i==27: day='2026-10-15'
+    if i==55: day='2026-10-15'
     depart = day+'T01:50:00+05:00'
     finish = day+'T16:20:00+05:00'
     delayed = i in [21,22] or 444<=i<454
     pickup,delivery = routes[i%len(routes)]
     if i==21: pickup,delivery='Экибастуз','Караганда'
-    if i==27: pickup,delivery='Караганда','Павлодар'
+    if i==55: pickup,delivery='Караганда','Павлодар'
     oid,tid = uid('order'+str(i)),uid('trip'+str(i))
     driver = uid('askhat' if i==21 else ['askhat','ermek','bauyrzhan'][i%3])
-    orders.append(dict(id=oid,number='CF-1789' if i==27 else 'CF-'+str(2000+i),
+    orders.append(dict(id=oid,number='CF-'+str(1818+i if i<27 else 1817-(i-27)),
         carrier_company_id=carrier,client_company_id=client,cargo_name='Строительные материалы',
         weight_kg=8500,places=12,places_unit='паллет',pickup_city=pickup,pickup_address='ул. Промышленная, 18',
         pickup_contact_name='Серик',pickup_contact_phone=None,delivery_city=delivery,delivery_address='ул. Индустриальная, 42',
         delivery_contact_name='Алексей',delivery_contact_phone=None,load_date=day,desired_delivery_at=finish,
         status='done' if status=='completed' else 'cancelled' if status=='cancelled' else 'in_trip',created_by=uid('dispatcher'),created_at=(datetime.fromisoformat(depart)-timedelta(minutes=10)).isoformat()))
-    trips.append(dict(id=tid,number='R-648' if i==21 else 'R-601' if i==27 else 'R-'+str(1000+i),
+    trips.append(dict(id=tid,number='R-648' if i==21 else 'R-'+str(615+i if i<27 else 614-(i-27)),
         order_id=oid,driver_id=driver,vehicle_id=vehicles[1+i%3]['id'],depart_date=day,
         planned_delivery_at=finish,current_planned_delivery_at=day+'T17:50:00+05:00' if delayed else finish,
         status=status,delayed=delayed,has_problem=delayed,accepted_at=None if status=='assigned' else depart,

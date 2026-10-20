@@ -1,5 +1,6 @@
 import type { Trip, TripDetail } from '../../domain/TripRepository';
 import type { TripStatus } from '../../domain/statusMachine';
+import { dateTime } from '../../domain/format';
 
 export type Segment = 'all' | 'waiting' | 'transit' | 'unloading' | 'delayed' | 'completed';
 export const segments: { key: Segment; label: string; title: string }[] = [
@@ -42,11 +43,7 @@ export function statusPresentation(trip: Trip): { label: string; tone: 'accentTe
   return { label: statusLabels[trip.status], tone: key === 'completed' ? 'completed'
     : trip.status === 'cancelled' ? 'delay' : key === 'waiting' ? 'waiting' : 'accentText' };
 }
-const formatter = new Intl.DateTimeFormat('ru-RU', { timeZone: 'Asia/Almaty', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
-export function dateTime(value: string): string {
-  const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? 'Время не указано' : formatter.format(date).replace(/\./g, '');
-}
+export { dateTime } from '../../domain/format';
 export function timelineSteps(trip: TripDetail): { id: string; label: string; time: string; state: 'done' | 'current' }[] {
   const matching = trip.events.filter((event) => event.type === 'status' && event.to_status === trip.status);
   const currentId = ['completed', 'cancelled'].includes(trip.status) ? null : matching[matching.length - 1]?.id;

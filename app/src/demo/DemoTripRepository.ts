@@ -1,18 +1,31 @@
-import { checkFilter, checkId, RepositoryError, type TripRepository, type TripFilter, type Trip, type TripDetail, type Row } from '../domain/TripRepository';
-import { data } from './data';
+import { ACTIVE, type Command } from '../domain/commands';
+import { checkFilter, checkId, RepositoryError, type TripRepository, type TripFilter, type Trip, type TripDetail, type Row, type OrderWithTrip } from '../domain/TripRepository';
+import { demoStore, type DemoStore } from './store';
+
+const CLIENT_HIDDEN_EVENTS = ['note', 'problem', 'problem_ack'];
 
 export class DemoTripRepository implements TripRepository {
-  constructor(private user: Row<'profiles'>) {}
+  constructor(private user: Row<'profiles'>, private store: DemoStore = demoStore()) {}
+
+  private async pause() {
+    await new Promise((resolve) => setTimeout(resolve, 150 + Math.random() * 250));
+  }
+
+  private sees(order: Row<'orders'>, trip: Row<'trips'> | null) {
+    if (this.user.role === 'client') return order.client_company_id === this.user.company_id;
+    if (this.user.role === 'driver') return trip !== null && trip.driver_id === this.user.id;
+    return order.carrier_company_id === this.user.company_id;
+  }
+
+  private clone<T>(value: T): T { return JSON.parse(JSON.stringify(value)); }
 
   private async visible(): Promise<Trip[]> {
-    await new Promise((resolve) => setTimeout(resolve, 150 + Math.random() * 250));
-    const trips = data.trips.flatMap((trip) => {
-      const order = data.orders.find((order) => order.id === trip.order_id)!;
-      const visible = this.user.role === 'client' ? order.client_company_id === this.user.company_id
-        : this.user.role === 'driver' ? trip.driver_id === this.user.id : order.carrier_company_id === this.user.company_id;
-      return visible ? [{ ...trip, order }] : [];
+    await this.pause();
+    const trips = [...this.store.tables.trips.values()].flatMap((trip) => {
+      const order = this.store.tables.orders.get(trip.order_id)!;
+      return this.sees(order, trip) ? [{ ...trip, order }] : [];
     });
-    return JSON.parse(JSON.stringify(trips.sort((a, b) => a.number.localeCompare(b.number)))) as Trip[];
+    return this.clone(trips.sort((a, b) => a.number.localeCompare(b.number, undefined, { numeric: true })));
   }
 
   async listForDispatcher(filter?: TripFilter) {
@@ -27,18 +40,50 @@ export class DemoTripRepository implements TripRepository {
 
   async get(id: string) {
     checkId(id);
-    const trip = (await this.visible()).find((trip) => trip.id === id);
-    if (!trip) throw new RepositoryError('not_found');
-    const events = data.trip_events.filter((event) => event.trip_id === id &&
-      (this.user.role !== 'client' || (!Object.hasOwn(event.payload as object, 'internal') &&
-        !['note', 'problem', 'problem_ack'].includes(event.type))));
-    const profile = data.profiles.find((profile) => profile.id === trip.driver_id);
-    return JSON.parse(JSON.stringify({ ...trip,
-      events: events.sort((a, b) => a.created_at.localeCompare(b.created_at) || a.id.localeCompare(b.id)),
-      driver: this.user.role === 'client' || !profile ? null : { full_name: profile.full_name, phone: profile.phone },
-      vehicle: this.user.role === 'client' ? null : data.vehicles.find((vehicle) => vehicle.id === trip.vehicle_id) ?? null,
-      problems: this.user.role === 'client' ? [] : data.trip_problems.filter((problem) => problem.trip_id === id),
-      photos: [], documents: [], handover: null,
-    })) as TripDetail;
+    const detail = this.store.detail(id);
+    if (!detail || !this.sees(detail.order, detail)) throw new RepositoryError('not_found');
+    await this.pause();
+    if (this.user.role !== 'client') return this.clone(detail);
+    return this.clone({ ...detail, driver: null, vehicle: null, problems: [],
+      events: detail.events.filter((event) => !Object.hasOwn(event.payload as object, 'internal') && !CLIENT_HIDDEN_EVENTS.includes(event.type)) }) as TripDetail;
+  }
+
+  async listOrders() {
+    await this.pause();
+    const trips = [...this.store.tables.trips.values()];
+    const rows = [...this.store.tables.orders.values()].flatMap((order): OrderWithTrip[] => {
+      const own = trips.filter((trip) => trip.order_id === order.id);
+      const trip = own.find((item) => item.status !== 'cancelled') ?? null;
+      return this.sees(order, trip) ? [{ ...order, trip }] : [];
+    });
+    return this.clone(rows.sort((a, b) => b.created_at.localeCompare(a.created_at) || b.number.localeCompare(a.number)));
+  }
+
+  async listNotifications() {
+    await this.pause();
+    return this.clone(this.store.tables.notifications.filter((row) => row.user_id === this.user.id)
+      .sort((a, b) => b.created_at.localeCompare(a.created_at)));
+  }
+
+  async markRead(id: string) {
+    this.store.readNotification(id, this.user.id);
+  }
+
+  async assignmentOptions() {
+    await this.pause();
+    if (this.user.role !== 'dispatcher') return { drivers: [], vehicles: [], clients: [] };
+    const trips = [...this.store.tables.trips.values()];
+    const drivers = [...this.store.tables.profiles.values()]
+      .filter((profile) => profile.role === 'driver' && profile.company_id === this.user.company_id)
+      .map(({ id, full_name }) => ({ id, full_name,
+        active_trips: trips.filter((trip) => trip.driver_id === id && (trip.status === 'assigned' || ACTIVE.includes(trip.status))).length }))
+      .sort((a, b) => a.active_trips - b.active_trips || a.full_name.localeCompare(b.full_name));
+    const vehicles = [...this.store.tables.vehicles.values()].filter((vehicle) => vehicle.company_id === this.user.company_id);
+    const clients = [...this.store.tables.companies.values()].filter((company) => company.type === 'client');
+    return this.clone({ drivers, vehicles, clients });
+  }
+
+  async apply(command: Command) {
+    this.store.apply(command, this.user);
   }
 }

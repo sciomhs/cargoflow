@@ -1,3 +1,4 @@
+import type { Command } from './commands';
 import type { Database } from './types';
 
 export type Row<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Row'];
@@ -12,11 +13,22 @@ export type TripDetail = Trip & {
   handover: Row<'handovers'> | null;
 };
 export type TripFilter = { date?: string };
+export type OrderWithTrip = Row<'orders'> & { trip: Row<'trips'> | null };
+export type AssignmentOptions = {
+  drivers: (Pick<Row<'profiles'>, 'id' | 'full_name'> & { active_trips: number })[];
+  vehicles: Row<'vehicles'>[];
+  clients: Row<'companies'>[];
+};
 
 export interface TripRepository {
   listForDispatcher(filter?: TripFilter): Promise<Trip[]>;
   listForDriver(driverId: string): Promise<Trip[]>;
   get(id: string): Promise<TripDetail>;
+  listOrders(): Promise<OrderWithTrip[]>;
+  listNotifications(): Promise<Row<'notifications'>[]>;
+  markRead(id: string): Promise<void>;
+  assignmentOptions(): Promise<AssignmentOptions>;
+  apply(command: Command): Promise<void>;
 }
 
 export class RepositoryError extends Error {

@@ -6,12 +6,15 @@ export function previewRepository(repo: TripRepository, state: DemoPreview): Tri
   if (state === 'normal') return repo;
   if (state === 'loading') {
     const pending = () => new Promise<never>(() => {});
-    return { listForDispatcher: pending, listForDriver: pending, get: pending };
+    return { listForDispatcher: pending, listForDriver: pending, get: pending, listOrders: pending,
+      listNotifications: pending, markRead: pending, assignmentOptions: pending, apply: pending };
   }
-  if (state === 'empty') return {
-    listForDispatcher: async () => [], listForDriver: async () => [],
-    get: async () => { throw new RepositoryError('not_found'); },
-  };
   const fail = async () => { throw new RepositoryError('unavailable'); };
-  return { listForDispatcher: fail, listForDriver: fail, get: fail };
+  if (state === 'empty') return {
+    listForDispatcher: async () => [], listForDriver: async () => [], listOrders: async () => [], listNotifications: async () => [],
+    get: async () => { throw new RepositoryError('not_found'); }, markRead: async () => {},
+    assignmentOptions: async () => ({ drivers: [], vehicles: [], clients: [] }), apply: fail,
+  };
+  return { listForDispatcher: fail, listForDriver: fail, get: fail, listOrders: fail, listNotifications: fail,
+    markRead: fail, assignmentOptions: fail, apply: fail };
 }
