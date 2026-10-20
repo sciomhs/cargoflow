@@ -1,4 +1,4 @@
--- CargoFlow — схема Supabase (Postgres). Применять: supabase db push / SQL editor.
+-- CargoFlow — базовая схема. Применять все supabase/migrations через CLI.
 -- Источник истины для src/domain/types.ts (supabase gen types typescript).
 
 create extension if not exists "pgcrypto";
@@ -106,7 +106,7 @@ create table trip_photos (
   id uuid primary key default gen_random_uuid(),
   trip_id uuid not null references trips(id) on delete cascade,
   stage photo_stage not null,
-  storage_path text not null,        -- trip-media/{trip}/{stage}/{uuid}.jpg
+  storage_path text not null,        -- {trip}/{stage}/{uuid}.jpg внутри bucket trip-media
   taken_at timestamptz not null default now(),
   uploaded_by uuid references profiles(id)
 );
