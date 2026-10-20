@@ -1,0 +1,21 @@
+appId: host.exp.Exponent
+---
+- runFlow: { file: _login.yaml, env: { ROLE: "Водитель" } }
+- assertVisible: "Новый рейс.*R-642.*"
+- takeScreenshot: ../screenshots/T-09-today
+- tapOn: "Открыть и принять рейс"
+- extendedWaitUntil: { visible: "Принять рейс", timeout: 10000 }
+- takeScreenshot: ../screenshots/T-09-trip
+- tapOn: "Принять рейс"
+- tapOn: "Выехал на загрузку"
+- tapOn: "Прибыл на загрузку"
+- tapOn: "Начать загрузку"
+- tapOn: "Сфотографировать груз"
+- tapOn: "Сделать фото"
+- extendedWaitUntil: { visible: "Камера недоступна.*|Нет доступа.*|Allow.*|Разрешить.*", timeout: 8000 }
+- takeScreenshot: ../screenshots/T-10-camera
+- runFlow: { when: { visible: "Allow.*|Разрешить.*" }, commands: [ { tapOn: "Allow.*|Разрешить.*" } ] }
+- tapOn: "Из галереи"
+- runFlow: { when: { visible: "Allow Full Access|Разрешить полный доступ" }, commands: [ { tapOn: "Allow Full Access|Разрешить полный доступ" } ] }
+- waitForAnimationToEnd
+- takeScreenshot: ../screenshots/T-10-picker

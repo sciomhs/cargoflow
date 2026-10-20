@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import type { Command, CommandBody } from '@/domain/commands';
 import { RepositoryError, type TripRepository } from '@/domain/TripRepository';
+import { demoUser } from '@/demo/data';
 import { demoStore } from '@/demo/store';
 import { useSession } from '@/store/session';
 import { useSettings } from '@/store/settings';
@@ -72,4 +73,9 @@ export function useAction() {
 
 export function useActionId() {
   return useState(() => randomUUID())[0];
+}
+
+export function useUser() {
+  const role = useSession((state) => state.role);
+  return role ? demoUser(role) : null;
 }

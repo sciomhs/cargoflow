@@ -1,0 +1,7 @@
+appId: host.exp.Exponent
+---
+- openLink: exp://127.0.0.1:8084
+- extendedWaitUntil: { visible: "Войти|Сменить роль", timeout: 240000 }
+- runFlow: { when: { visible: "Сменить роль" }, commands: [ { tapOn: "Сменить роль" } ] }
+- tapOn: "${ROLE}.*"
+- tapOn: "Войти"

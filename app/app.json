@@ -21,7 +21,14 @@
           }
         }
       ],
-      "expo-sqlite"
+      "expo-sqlite",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "CargoFlow прикрепляет фото груза и документов к рейсу.",
+          "cameraPermission": "CargoFlow снимает груз и документы на этапах рейса."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

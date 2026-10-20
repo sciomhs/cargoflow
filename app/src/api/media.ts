@@ -1,5 +1,6 @@
-// shortcut: server uploads read local files in T-10; until then the RPC rejects missing files.
+import { mediaFile } from '@/features/media/photos';
+
 export async function readMedia(storagePath: string): Promise<Uint8Array | null> {
-  void storagePath;
-  return null;
+  const file = mediaFile(storagePath);
+  return file.exists ? file.bytes() : null;
 }
