@@ -1,5 +1,5 @@
 import type { PostgrestError, SupabaseClient } from '@supabase/supabase-js';
-import { ACTIVE, CommandError, type Command } from '../domain/commands';
+import { ACTIVE, CommandError, firstFree, type Command } from '../domain/commands';
 import type { Database, Json } from '../domain/types';
 import { checkFilter, checkId, RepositoryError, type TripRepository, type TripFilter } from '../domain/TripRepository';
 
@@ -49,10 +49,11 @@ export class SupabaseTripRepository implements TripRepository {
   }
 
   async listOrders() {
-    const { data, error } = await this.client.from('orders').select('*, trips(*)')
+    const { data, error } = await this.client.from('orders').select('*, trips(*), client:companies!orders_client_company_id_fkey(name)')
       .order('created_at', { ascending: false }).order('number', { ascending: false });
     if (error) throw new RepositoryError('unavailable');
-    return data.map(({ trips, ...order }) => ({ ...order, trip: trips.find((trip) => trip.status !== 'cancelled') ?? null }));
+    return data.map(({ trips, client, ...order }) => ({ ...order, client_name: client?.name ?? '',
+      trip: trips.find((trip) => trip.status !== 'cancelled') ?? null }));
   }
 
   async listNotifications() {
@@ -80,6 +81,12 @@ export class SupabaseTripRepository implements TripRepository {
         .sort((a, b) => a.active_trips - b.active_trips || a.full_name.localeCompare(b.full_name)),
       vehicles: vehicles.data!, clients: clients.data!,
     };
+  }
+
+  async nextNumber(kind: 'order' | 'trip') {
+    const { data, error } = kind === 'order' ? await this.client.from('orders').select('number') : await this.client.from('trips').select('number');
+    if (error) throw new RepositoryError('unavailable');
+    return firstFree(data.map((row) => row.number), kind === 'order' ? 'CF-' : 'R-');
   }
 
   private async upload(storagePath: string) {

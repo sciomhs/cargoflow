@@ -1,0 +1,82 @@
+appId: host.exp.Exponent
+---
+- openLink: exp://127.0.0.1:8084
+- extendedWaitUntil: { visible: "Войти", timeout: 240000 }
+- tapOn: "Диспетчер.*"
+- tapOn: "Войти"
+- tapOn: "Заказы.*"
+- tapOn: "Создать заказ"
+- swipe: { start: "50%, 30%", end: "50%, 26%", duration: 300 }
+- scrollUntilVisible: { element: { id: "order-cargo" }, centerElement: true, visibilityPercentage: 60 }
+- tapOn: { id: "order-cargo" }
+- waitForAnimationToEnd
+- inputText: "Керамическая плитка"
+- swipe: { start: "50%, 30%", end: "50%, 26%", duration: 300 }
+- scrollUntilVisible: { element: { id: "order-weight" }, centerElement: true, visibilityPercentage: 60 }
+- tapOn: { id: "order-weight" }
+- waitForAnimationToEnd
+- inputText: "8500"
+- swipe: { start: "50%, 30%", end: "50%, 26%", duration: 300 }
+- scrollUntilVisible: { element: { id: "order-places" }, centerElement: true, visibilityPercentage: 60 }
+- tapOn: { id: "order-places" }
+- waitForAnimationToEnd
+- inputText: "12"
+- swipe: { start: "50%, 30%", end: "50%, 26%", duration: 300 }
+- scrollUntilVisible: { element: { id: "order-pickupCity" }, centerElement: true, visibilityPercentage: 60 }
+- tapOn: { id: "order-pickupCity" }
+- waitForAnimationToEnd
+- inputText: "Павлодар"
+- swipe: { start: "50%, 30%", end: "50%, 26%", duration: 300 }
+- scrollUntilVisible: { element: { id: "order-pickupAddress" }, centerElement: true, visibilityPercentage: 60 }
+- tapOn: { id: "order-pickupAddress" }
+- waitForAnimationToEnd
+- inputText: "ул. Промышленная, 18"
+- swipe: { start: "50%, 30%", end: "50%, 26%", duration: 300 }
+- scrollUntilVisible: { element: { id: "order-pickupName" }, centerElement: true, visibilityPercentage: 60 }
+- tapOn: { id: "order-pickupName" }
+- waitForAnimationToEnd
+- inputText: "Серик"
+- swipe: { start: "50%, 30%", end: "50%, 26%", duration: 300 }
+- scrollUntilVisible: { element: { id: "order-pickupPhone" }, centerElement: true, visibilityPercentage: 60 }
+- tapOn: { id: "order-pickupPhone" }
+- waitForAnimationToEnd
+- inputText: "+7 777 123 45 67"
+- swipe: { start: "50%, 30%", end: "50%, 26%", duration: 300 }
+- scrollUntilVisible: { element: { id: "order-loadDay" }, centerElement: true, visibilityPercentage: 60 }
+- tapOn: { id: "order-loadDay" }
+- waitForAnimationToEnd
+- inputText: "21.10.2026"
+- swipe: { start: "50%, 30%", end: "50%, 26%", duration: 300 }
+- scrollUntilVisible: { element: { id: "order-deliveryCity" }, centerElement: true, visibilityPercentage: 60 }
+- tapOn: { id: "order-deliveryCity" }
+- waitForAnimationToEnd
+- inputText: "Астана"
+- swipe: { start: "50%, 30%", end: "50%, 26%", duration: 300 }
+- scrollUntilVisible: { element: { id: "order-deliveryAddress" }, centerElement: true, visibilityPercentage: 60 }
+- tapOn: { id: "order-deliveryAddress" }
+- waitForAnimationToEnd
+- inputText: "ул. Индустриальная, 42"
+- swipe: { start: "50%, 30%", end: "50%, 26%", duration: 300 }
+- scrollUntilVisible: { element: { id: "order-deliveryName" }, centerElement: true, visibilityPercentage: 60 }
+- tapOn: { id: "order-deliveryName" }
+- waitForAnimationToEnd
+- inputText: "Алексей"
+- swipe: { start: "50%, 30%", end: "50%, 26%", duration: 300 }
+- scrollUntilVisible: { element: { id: "order-deliveryPhone" }, centerElement: true, visibilityPercentage: 60 }
+- tapOn: { id: "order-deliveryPhone" }
+- waitForAnimationToEnd
+- inputText: "+7 701 456 78 90"
+- swipe: { start: "50%, 30%", end: "50%, 26%", duration: 300 }
+- scrollUntilVisible: { element: { id: "order-deliveryDay" }, centerElement: true, visibilityPercentage: 60 }
+- tapOn: { id: "order-deliveryDay" }
+- waitForAnimationToEnd
+- inputText: "22.10.2026"
+- tapOn: { id: "order-deliveryTime" }
+- waitForAnimationToEnd
+- inputText: "15:00"
+- pressKey: Enter
+- takeScreenshot: ../screenshots/T-08-order-form
+- scrollUntilVisible: { element: "Сохранить заказ CF-1845" }
+- tapOn: "Сохранить заказ CF-1845"
+- extendedWaitUntil: { visible: "Создать рейс", timeout: 10000 }
+- takeScreenshot: ../screenshots/T-08-order

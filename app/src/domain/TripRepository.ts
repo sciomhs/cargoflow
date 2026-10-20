@@ -13,7 +13,7 @@ export type TripDetail = Trip & {
   handover: Row<'handovers'> | null;
 };
 export type TripFilter = { date?: string };
-export type OrderWithTrip = Row<'orders'> & { trip: Row<'trips'> | null };
+export type OrderWithTrip = Row<'orders'> & { trip: Row<'trips'> | null; client_name: string };
 export type AssignmentOptions = {
   drivers: (Pick<Row<'profiles'>, 'id' | 'full_name'> & { active_trips: number })[];
   vehicles: Row<'vehicles'>[];
@@ -28,6 +28,7 @@ export interface TripRepository {
   listNotifications(): Promise<Row<'notifications'>[]>;
   markRead(id: string): Promise<void>;
   assignmentOptions(): Promise<AssignmentOptions>;
+  nextNumber(kind: 'order' | 'trip'): Promise<string>;
   apply(command: Command): Promise<void>;
 }
 

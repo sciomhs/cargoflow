@@ -62,6 +62,14 @@ export const TRIP_NUMBER = /^R-\d{1,6}$/;
 export const ACTIVE: readonly TripStatus[] = ['accepted', 'to_pickup', 'at_pickup', 'loading', 'loaded',
   'in_transit', 'at_delivery', 'unloading'];
 
+// Smallest unused number above the lowest one in use: fills the sequence without guessing.
+export function firstFree(numbers: string[], prefix: 'CF-' | 'R-'): string {
+  const used = new Set(numbers.filter((n) => n.startsWith(prefix)).map((n) => Number(n.slice(prefix.length))));
+  let next = used.size ? Math.min(...used) : 1;
+  while (used.has(next)) next++;
+  return prefix + next;
+}
+
 export function isUuid(value: unknown): value is string { return typeof value === 'string' && UUID.test(value); }
 export function isTimestamp(value: unknown): value is string {
   return typeof value === 'string' && value.length >= 10 && Number.isFinite(Date.parse(value));

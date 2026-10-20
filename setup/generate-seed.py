@@ -37,7 +37,7 @@ for i,status in enumerate(today + history):
         pickup_contact_name='Серик',pickup_contact_phone=None,delivery_city=delivery,delivery_address='ул. Индустриальная, 42',
         delivery_contact_name='Алексей',delivery_contact_phone=None,load_date=day,desired_delivery_at=finish,
         status='done' if status=='completed' else 'cancelled' if status=='cancelled' else 'in_trip',created_by=uid('dispatcher'),created_at=(datetime.fromisoformat(depart)-timedelta(minutes=10)).isoformat()))
-    trips.append(dict(id=tid,number='R-648' if i==21 else 'R-'+str(615+i if i<27 else 614-(i-27)),
+    trips.append(dict(id=tid,number='R-648' if i==21 else 'R-'+str(616+i if i<21 else 615+i if i<27 else 615-(i-27)),
         order_id=oid,driver_id=driver,vehicle_id=vehicles[1+i%3]['id'],depart_date=day,
         planned_delivery_at=finish,current_planned_delivery_at=day+'T17:50:00+05:00' if delayed else finish,
         status=status,delayed=delayed,has_problem=delayed,accepted_at=None if status=='assigned' else depart,

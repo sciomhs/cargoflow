@@ -1,0 +1,23 @@
+appId: host.exp.Exponent
+---
+- openLink: exp://127.0.0.1:8084
+- extendedWaitUntil: { visible: "Войти|Рейсы.*", timeout: 240000 }
+- runFlow: { when: { visible: "Войти" }, commands: [ { tapOn: "Диспетчер.*" }, { tapOn: "Войти" } ] }
+- tapOn: "Заказы.*"
+- tapOn: ".*CF-1845.*"
+- tapOn: "Создать рейс"
+- extendedWaitUntil: { visible: "Руслан Касымов.*", timeout: 10000 }
+- tapOn: "Руслан Касымов.*"
+- scrollUntilVisible: { element: "Volvo FH · 777 ABC 14.*" }
+- tapOn: "Volvo FH · 777 ABC 14.*"
+- scrollUntilVisible: { element: { id: "trip-time" }, visibilityPercentage: 60 }
+- tapOn: { id: "trip-time" }
+- inputText: "13:00"
+- pressKey: Enter
+- takeScreenshot: ../screenshots/T-08-trip-form
+- scrollUntilVisible: { element: "Назначить рейс R-642" }
+- tapOn: "Назначить рейс R-642"
+- extendedWaitUntil: { visible: "Назначение", timeout: 10000 }
+- assertVisible: "R-642"
+- assertVisible: "Назначен"
+- takeScreenshot: ../screenshots/T-08-trip

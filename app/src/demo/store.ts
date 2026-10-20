@@ -120,6 +120,15 @@ export class DemoStore {
     this.journal.push(command);
   }
 
+  // Demo actions happen on the fixed demo day at the current Almaty time of day, always after the previous action.
+  nextAt(now = new Date()): string {
+    const time = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Almaty', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' }).format(now);
+    let at = Date.parse(`${data.date}T${time}+05:00`);
+    const last = this.journal.at(-1)?.at;
+    if (last && at <= Date.parse(last)) at = Date.parse(last) + 60000;
+    return new Date(at).toISOString();
+  }
+
   readNotification(id: string, userId: string) {
     const row = this.tables.notifications.find((item) => item.id === id && item.user_id === userId);
     if (row && !row.read_at) {

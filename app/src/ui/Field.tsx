@@ -1,12 +1,12 @@
-import { useId, useState } from 'react';
+import { useId, useState, type Ref } from 'react';
 import { TextInput, View, type TextInputProps } from 'react-native';
 
 import { Text } from './Text';
 import { useTheme } from './theme';
 import { fonts, radius, spacing, touch, typeScale } from './tokens';
 
-export function Field({ label, error, style, onFocus, onBlur, editable = true, ...props }: TextInputProps & {
-  label: string; error?: string;
+export function Field({ label, error, style, onFocus, onBlur, editable = true, ref, ...props }: TextInputProps & {
+  label: string; error?: string; ref?: Ref<TextInput>;
 }) {
   const { colors, isDriver } = useTheme();
   const [focused, setFocused] = useState(false);
@@ -16,6 +16,7 @@ export function Field({ label, error, style, onFocus, onBlur, editable = true, .
       <Text size="small" nativeID={`${id}-label`}>{label}</Text>
       <TextInput
         {...props}
+        ref={ref}
         editable={editable}
         accessibilityLabel={label}
         accessibilityHint={error}

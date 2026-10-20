@@ -1,4 +1,4 @@
-import { ACTIVE, type Command } from '../domain/commands';
+import { ACTIVE, firstFree, type Command } from '../domain/commands';
 import { checkFilter, checkId, RepositoryError, type TripRepository, type TripFilter, type Trip, type TripDetail, type Row, type OrderWithTrip } from '../domain/TripRepository';
 import { demoStore, type DemoStore } from './store';
 
@@ -54,7 +54,7 @@ export class DemoTripRepository implements TripRepository {
     const rows = [...this.store.tables.orders.values()].flatMap((order): OrderWithTrip[] => {
       const own = trips.filter((trip) => trip.order_id === order.id);
       const trip = own.find((item) => item.status !== 'cancelled') ?? null;
-      return this.sees(order, trip) ? [{ ...order, trip }] : [];
+      return this.sees(order, trip) ? [{ ...order, trip, client_name: this.store.tables.companies.get(order.client_company_id)?.name ?? '' }] : [];
     });
     return this.clone(rows.sort((a, b) => b.created_at.localeCompare(a.created_at) || b.number.localeCompare(a.number)));
   }
@@ -81,6 +81,11 @@ export class DemoTripRepository implements TripRepository {
     const vehicles = [...this.store.tables.vehicles.values()].filter((vehicle) => vehicle.company_id === this.user.company_id);
     const clients = [...this.store.tables.companies.values()].filter((company) => company.type === 'client');
     return this.clone({ drivers, vehicles, clients });
+  }
+
+  async nextNumber(kind: 'order' | 'trip') {
+    const rows = kind === 'order' ? this.store.tables.orders : this.store.tables.trips;
+    return firstFree([...rows.values()].map((row) => row.number), kind === 'order' ? 'CF-' : 'R-');
   }
 
   async apply(command: Command) {

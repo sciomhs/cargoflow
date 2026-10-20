@@ -1,6 +1,7 @@
 import { expect, test } from 'vitest';
 import { data, demoDate, demoUser } from '../src/demo/data';
 import { DemoTripRepository } from '../src/demo/DemoTripRepository';
+import { firstFree } from '../src/domain/commands';
 
 test('27 рейсов демо-дня: 5/13/3/2/4', async () => {
   const trips = await new DemoTripRepository(demoUser('dispatcher')).listForDispatcher({ date: demoDate });
@@ -50,4 +51,9 @@ test('некорректные UUID и даты отклоняются на гр
   await expect(repo.get('preview')).rejects.toMatchObject({ code: 'not_found' });
   await expect(repo.listForDriver('not-a-user')).rejects.toMatchObject({ code: 'not_found' });
   await expect(repo.listForDispatcher({ date: '2026-02-30' })).rejects.toThrow('Некорректная дата');
+});
+
+test('первые свободные номера — CF-1845 и R-642', () => {
+  expect(firstFree(data.orders.map((order) => order.number), 'CF-')).toBe('CF-1845');
+  expect(firstFree(data.trips.map((trip) => trip.number), 'R-')).toBe('R-642');
 });

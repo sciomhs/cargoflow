@@ -1,5 +1,6 @@
 import NavigationLinks from '@/components/navigation-links';
-import { View } from 'react-native';
+import { Alert, View } from 'react-native';
+import { demoStore } from '@/demo/store';
 import { Row, Text } from '@/ui';
 import { useSettings } from '@/store/settings';
 import { spacing } from '@/ui/tokens';
@@ -12,6 +13,11 @@ export default function SettingsScreen() {
       <Row label="Демо-режим" detail="Данные доступны без сети" accessibilityRole="switch"
         accessibilityState={{ checked: demoMode }} onPress={() => setDemoMode(!demoMode)}
         trailing={<Text size="small">{demoMode ? 'Включён' : 'Выключен'}</Text>} />
+      {demoMode && <Row label="Сбросить демо" detail="Удалить созданные заказы, рейсы и действия" onPress={() =>
+        Alert.alert('Сбросить демо?', 'Созданные на этом устройстве заказы, рейсы, фото и уведомления будут удалены. Исходные данные 21 октября вернутся.', [
+          { text: 'Отмена', style: 'cancel' },
+          { text: 'Сбросить', style: 'destructive', onPress: () => demoStore().reset() },
+        ])} />}
       {__DEV__ && demoMode && <View accessibilityRole="radiogroup" accessibilityLabel="Проверка экранов">
         <Text size="small" tone="muted" style={{ marginTop: spacing.lg }}>Проверка экранов</Text>
         {([['normal', 'Данные'], ['loading', 'Загрузка'], ['empty', 'Пусто'], ['error', 'Ошибка']] as [DemoPreview, string][])

@@ -1,50 +1,26 @@
-import { useEffect, useState, type ReactNode } from 'react';
 import { ScrollView, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { tripRepository } from '@/api/repository';
-import type { TripDetail } from '@/domain/TripRepository';
-import { RepositoryError } from '@/domain/TripRepository';
-import { useSession } from '@/store/session';
-import { useSettings } from '@/store/settings';
+import { useLoad } from '@/api/useRepo';
+import { Section } from '@/components/form';
 import { Text, Row, StatusChip, Timeline, EmptyState, Skeleton } from '@/ui';
 import { spacing } from '@/ui/tokens';
 import { dateTime, statusPresentation, timelineSteps } from './presentation';
 
-function Section({ title, children }: { title: string; children: ReactNode }) {
-  return <View style={{ gap: spacing.md }}>
-    <Text size="title" accessibilityRole="header">{title}</Text>
-    {children}
-  </View>;
-}
-
 export default function TripDetailScreen() {
   const params = useLocalSearchParams<{ id?: string | string[] }>();
   const id = typeof params.id === 'string' ? params.id : '';
-  const role = useSession((state) => state.role);
-  const demoMode = useSettings((state) => state.demoMode);
-  const preview = useSettings((state) => state.demoPreview);
-  const [retry, setRetry] = useState(0);
-  const [result, setResult] = useState<{ key: string; trip?: TripDetail; error?: string; notFound?: boolean }>();
-  const key = `${role}:${demoMode}:${preview}:${id}:${retry}`;
-  const current = result?.key === key ? result : undefined;
+  const loaded = useLoad((repo) => repo.get(id), `trip:${id}`);
+  const current = loaded.data || loaded.error ? { trip: loaded.data, error: loaded.error, notFound: loaded.notFound } : undefined;
   const insets = useSafeAreaInsets();
-  useEffect(() => {
-    let active = true;
-    if (role) tripRepository(demoMode, role, preview).then((repo) => repo.get(id))
-      .then((trip) => { if (active) setResult({ key, trip }); })
-      .catch((error: Error) => { if (active) setResult({ key, error: error.message,
-        notFound: error instanceof RepositoryError && error.code === 'not_found' }); });
-    return () => { active = false; };
-  }, [role, demoMode, preview, id, key]);
   const trip = current?.trip;
   const steps = trip ? timelineSteps(trip) : [];
   return <ScrollView className="flex-1 bg-background" contentContainerStyle={{ padding: spacing.lg,
     paddingBottom: insets.bottom + spacing.xl, gap: spacing.xxl }}>
     {current?.error ? <EmptyState label={current.error} action={current.notFound
       ? { label: 'К списку рейсов', onPress: () => router.dismissTo('/(dispatcher)/(tabs)/trips') }
-      : { label: 'Повторить', onPress: () => setRetry(retry + 1) }} /> : !trip ? <Skeleton /> : <>
+      : { label: 'Повторить', onPress: loaded.retry }} /> : !trip ? <Skeleton /> : <>
       <View style={{ gap: spacing.md }}>
         <Text mono size="title">{trip.number}</Text>
         <Text size="title">{trip.order.pickup_city} → {trip.order.delivery_city}</Text>
