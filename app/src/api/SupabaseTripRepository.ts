@@ -27,8 +27,19 @@ export class SupabaseTripRepository implements TripRepository {
     const { data: trip, error } = await this.client.from('trips').select('*, order:orders!inner(*)').eq('id', id).maybeSingle();
     if (error) throw new RepositoryError('unavailable');
     if (!trip) throw new RepositoryError('not_found');
-    const { data: events, error: eventError } = await this.client.from('trip_events').select('*').eq('trip_id', id).order('created_at').order('id');
-    if (eventError) throw new RepositoryError('unavailable');
-    return { ...trip, events };
+    const [events, driver, vehicle, photos, documents, problems, handover] = await Promise.all([
+      this.client.from('trip_events').select('*').eq('trip_id', id).order('created_at').order('id'),
+      this.client.from('profiles').select('full_name, phone').eq('id', trip.driver_id).maybeSingle(),
+      this.client.from('vehicles').select('*').eq('id', trip.vehicle_id).maybeSingle(),
+      this.client.from('trip_photos').select('*').eq('trip_id', id).order('taken_at'),
+      this.client.from('trip_documents').select('*').eq('trip_id', id).order('created_at'),
+      this.client.from('trip_problems').select('*').eq('trip_id', id).order('created_at'),
+      this.client.from('handovers').select('*').eq('trip_id', id).maybeSingle(),
+    ]);
+    if ([events, driver, vehicle, photos, documents, problems, handover].some((result) => result.error)) {
+      throw new RepositoryError('unavailable');
+    }
+    return { ...trip, events: events.data!, driver: driver.data, vehicle: vehicle.data,
+      photos: photos.data!, documents: documents.data!, problems: problems.data!, handover: handover.data };
   }
 }

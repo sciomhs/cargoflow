@@ -1,4 +1,4 @@
-import { checkFilter, checkId, RepositoryError, type TripRepository, type TripFilter, type Trip, type Row } from '../domain/TripRepository';
+import { checkFilter, checkId, RepositoryError, type TripRepository, type TripFilter, type Trip, type TripDetail, type Row } from '../domain/TripRepository';
 import { data } from './data';
 
 export class DemoTripRepository implements TripRepository {
@@ -32,6 +32,13 @@ export class DemoTripRepository implements TripRepository {
     const events = data.trip_events.filter((event) => event.trip_id === id &&
       (this.user.role !== 'client' || (!Object.hasOwn(event.payload as object, 'internal') &&
         !['note', 'problem', 'problem_ack'].includes(event.type))));
-    return { ...trip, events: JSON.parse(JSON.stringify(events.sort((a, b) => a.created_at.localeCompare(b.created_at) || a.id.localeCompare(b.id)))) as Row<'trip_events'>[] };
+    const profile = data.profiles.find((profile) => profile.id === trip.driver_id);
+    return JSON.parse(JSON.stringify({ ...trip,
+      events: events.sort((a, b) => a.created_at.localeCompare(b.created_at) || a.id.localeCompare(b.id)),
+      driver: this.user.role === 'client' || !profile ? null : { full_name: profile.full_name, phone: profile.phone },
+      vehicle: this.user.role === 'client' ? null : data.vehicles.find((vehicle) => vehicle.id === trip.vehicle_id) ?? null,
+      problems: this.user.role === 'client' ? [] : data.trip_problems.filter((problem) => problem.trip_id === id),
+      photos: [], documents: [], handover: null,
+    })) as TripDetail;
   }
 }

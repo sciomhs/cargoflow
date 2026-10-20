@@ -51,9 +51,9 @@ for i,status in enumerate(today + history):
     if delayed:
         problems.append(dict(id=uid('problem'+str(i)),trip_id=tid,category='delay',reason='Закрытие дороги',
             comment='Движение ограничено, задержка около 90 минут',estimated_delay_min=90,photo_path=None,
-            status='open',reported_by=driver,acknowledged_by=None,created_at=depart,resolved_at=None))
+            status='open',reported_by=driver,acknowledged_by=None,created_at=day+'T16:30:00+05:00',resolved_at=None))
         events.append(dict(id=uid('problem-event'+str(i)),trip_id=tid,type='problem',from_status=None,to_status=None,
-            actor_id=driver,payload={'internal':True,'reason':'Закрытие дороги'},client_action_id=None,created_at=depart))
+            actor_id=driver,payload={'internal':True,'reason':'Закрытие дороги'},client_action_id=None,created_at=day+'T16:30:00+05:00'))
 data=dict(date='2026-10-21',companies=[dict(id=carrier,name='CargoFlow',type='carrier',created_at=now),
     dict(id=client,name='ТОО «СтройКомплект»',type='client',created_at=now)],profiles=profiles,vehicles=vehicles,
     orders=orders,trips=trips,trip_events=events,trip_problems=problems)

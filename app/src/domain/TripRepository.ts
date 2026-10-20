@@ -2,7 +2,15 @@ import type { Database } from './types';
 
 export type Row<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Row'];
 export type Trip = Row<'trips'> & { order: Row<'orders'> };
-export type TripDetail = Trip & { events: Row<'trip_events'>[] };
+export type TripDetail = Trip & {
+  events: Row<'trip_events'>[];
+  driver: Pick<Row<'profiles'>, 'full_name' | 'phone'> | null;
+  vehicle: Row<'vehicles'> | null;
+  photos: Row<'trip_photos'>[];
+  documents: Row<'trip_documents'>[];
+  problems: Row<'trip_problems'>[];
+  handover: Row<'handovers'> | null;
+};
 export type TripFilter = { date?: string };
 
 export interface TripRepository {

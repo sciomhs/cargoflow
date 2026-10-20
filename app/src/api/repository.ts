@@ -3,9 +3,10 @@ import type { Database } from '../domain/types';
 import { DemoTripRepository } from '../demo/DemoTripRepository';
 import { demoUser, type Role } from '../demo/data';
 import { SupabaseTripRepository } from './SupabaseTripRepository';
+import { previewRepository, type DemoPreview } from '../demo/previewRepository';
 
-export async function tripRepository(demoMode: boolean, role: Role) {
-  if (demoMode) return new DemoTripRepository(demoUser(role));
+export async function tripRepository(demoMode: boolean, role: Role, preview: DemoPreview = 'normal') {
+  if (demoMode) return previewRepository(new DemoTripRepository(demoUser(role)), __DEV__ ? preview : 'normal');
   const url = process.env.EXPO_PUBLIC_SUPABASE_URL;
   const key = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
   const password = process.env.EXPO_PUBLIC_LOCAL_DEMO_PASSWORD;

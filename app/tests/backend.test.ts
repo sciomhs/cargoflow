@@ -30,8 +30,18 @@ for (const role of ['dispatcher','driver','client','manager'] as const) {
       await expect(remote.get(id)).rejects.toMatchObject({ code: 'not_found' });
     } else {
       const detail = await remote.get(id);
+      const demoDetail = await local.get(id);
+      expect(detail.driver).toEqual(demoDetail.driver);
+      expect(detail.vehicle?.plate).toBe(demoDetail.vehicle?.plate);
+      expect(detail.problems.map((problem) => problem.reason)).toEqual(demoDetail.problems.map((problem) => problem.reason));
+      expect(detail.photos).toEqual([]);
+      expect(detail.documents).toEqual([]);
+      if (role === 'client') {
+        expect(detail.driver).toBeNull();
+        expect(detail.problems).toEqual([]);
+      }
       expect(detail.events.map((e) => [e.from_status,e.to_status,e.type]).sort())
-        .toEqual((await local.get(id)).events.map((e) => [e.from_status,e.to_status,e.type]).sort());
+        .toEqual(demoDetail.events.map((e) => [e.from_status,e.to_status,e.type]).sort());
     }
   });
 }
