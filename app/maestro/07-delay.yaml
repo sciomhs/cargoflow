@@ -1,0 +1,43 @@
+appId: host.exp.Exponent
+---
+- runFlow: { file: _login.yaml, env: { ROLE: "Водитель" } }
+- tapOn: "Проблема"
+- extendedWaitUntil: { visible: "Категория", timeout: 15000 }
+- scrollUntilVisible: { element: { id: "problem-reason" }, visibilityPercentage: 60 }
+- tapOn: { id: "problem-reason" }
+- inputText: "Закрытие дороги"
+- swipe: { start: "50%, 30%", end: "50%, 26%", duration: 300 }
+- scrollUntilVisible: { element: { id: "problem-delay" }, visibilityPercentage: 60 }
+- tapOn: { id: "problem-delay" }
+- waitForAnimationToEnd
+- inputText: "90"
+- swipe: { start: "50%, 30%", end: "50%, 26%", duration: 300 }
+- scrollUntilVisible: { element: { id: "problem-comment" }, visibilityPercentage: 60 }
+- tapOn: { id: "problem-comment" }
+- waitForAnimationToEnd
+- inputText: "Движение ограничено, задержка около 90 минут"
+- swipe: { start: "50%, 40%", end: "50%, 20%", duration: 300 }
+- scrollUntilVisible: { element: "Отправить диспетчеру" }
+- tapOn: "Отправить диспетчеру"
+- extendedWaitUntil: { visible: "Задерживается", timeout: 15000 }
+- runFlow: { file: _login.yaml, env: { ROLE: "Диспетчер" } }
+- tapOn: "Внимание.*"
+- extendedWaitUntil: { visible: "R-642 · Закрытие дороги.*", timeout: 15000 }
+- takeScreenshot: ../screenshots/T-13-attention
+- tapOn: "R-642 · Закрытие дороги.*"
+- extendedWaitUntil: { visible: "Принять и сдвинуть доставку на 22 окт, 14:30", timeout: 15000 }
+- tapOn: "Принять и сдвинуть доставку на 22 окт, 14:30"
+- extendedWaitUntil: { visible: "Принята", timeout: 15000 }
+- takeScreenshot: ../screenshots/T-13-problem
+- runFlow: { file: _login.yaml, env: { ROLE: "Клиент" } }
+- assertVisible: "Уведомления.*"
+- tapOn: "Уведомления.*"
+- assertVisible: "Расчётное время доставки изменено"
+- assertVisible: ".*22 окт, 14:30.*"
+- assertNotVisible: ".*Закрытие дороги.*"
+- takeScreenshot: ../screenshots/T-13-client-notification
+- tapOn: "Расчётное время доставки изменено.*"
+- assertVisible: "Новое расчётное время"
+- assertVisible: ".*14:30.*задержка на маршруте"
+- assertNotVisible: ".*Закрытие дороги.*"
+- takeScreenshot: ../screenshots/T-13-client-eta

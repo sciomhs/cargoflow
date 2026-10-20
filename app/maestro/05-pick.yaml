@@ -1,0 +1,12 @@
+appId: host.exp.Exponent
+---
+- tapOn: { point: "16%,25%" }
+- extendedWaitUntil: { visible: "Переснять", timeout: 20000 }
+- takeScreenshot: ../screenshots/T-10-photo-selected
+- tapOn: "Прикрепить фото"
+- extendedWaitUntil: { visible: "Груз загружен", timeout: 15000 }
+- tapOn: "Груз загружен"
+- extendedWaitUntil: { visible: "В пути", timeout: 10000 }
+- tapOn: "В пути"
+- extendedWaitUntil: { visible: "Прибыл на выгрузку", timeout: 10000 }
+- takeScreenshot: ../screenshots/T-09-in-transit

@@ -1,0 +1,9 @@
+appId: host.exp.Exponent
+---
+- runFlow: { file: _login.yaml, env: { ROLE: "Клиент" } }
+- tapOn: "CF-1845.*"
+- extendedWaitUntil: { visible: "Заказ CF-1845", timeout: 15000 }
+- assertVisible: "В пути"
+- assertVisible: "Груз загружен"
+- assertVisible: "Прибытие на выгрузку"
+- takeScreenshot: ../screenshots/T-12-client-transit

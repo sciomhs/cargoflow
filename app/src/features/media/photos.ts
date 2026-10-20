@@ -21,12 +21,9 @@ export function mediaUri(storagePath: string): string | null {
 }
 
 export async function pickPhoto(tripId: string, folder: Folder, source: 'camera' | 'library'): Promise<PickResult> {
-  const permission = source === 'camera'
-    ? await ImagePicker.requestCameraPermissionsAsync()
-    : await ImagePicker.requestMediaLibraryPermissionsAsync();
-  if (!permission.granted) {
-    return { error: source === 'camera' ? 'Нет доступа к камере. Разрешите его в настройках телефона.'
-      : 'Нет доступа к фото. Разрешите его в настройках телефона.' };
+  // The system photo picker needs no library permission; only the camera asks.
+  if (source === 'camera' && !(await ImagePicker.requestCameraPermissionsAsync()).granted) {
+    return { error: 'Нет доступа к камере. Разрешите его в настройках телефона.' };
   }
   let result: ImagePicker.ImagePickerResult;
   try {

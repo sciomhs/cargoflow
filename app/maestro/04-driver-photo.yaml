@@ -1,0 +1,9 @@
+appId: host.exp.Exponent
+---
+- runFlow: { file: _login.yaml, env: { ROLE: "Водитель" } }
+- tapOn: "Открыть.*рейс"
+- extendedWaitUntil: { visible: "Сфотографировать груз", timeout: 15000 }
+- tapOn: "Сфотографировать груз"
+- tapOn: "Из галереи"
+- waitForAnimationToEnd
+- takeScreenshot: ../screenshots/T-10-picker
