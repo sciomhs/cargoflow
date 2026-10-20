@@ -83,6 +83,15 @@ export class DemoTripRepository implements TripRepository {
     return this.clone({ drivers, vehicles, clients });
   }
 
+  async listProblems() {
+    if (this.user.role === 'client') return [];
+    const trips = await this.visible();
+    return this.clone(this.store.tables.problems.flatMap((problem) => {
+      const trip = trips.find((item) => item.id === problem.trip_id);
+      return trip ? [{ ...problem, trip }] : [];
+    }).sort((a, b) => b.created_at.localeCompare(a.created_at)));
+  }
+
   async nextNumber(kind: 'order' | 'trip') {
     const rows = kind === 'order' ? this.store.tables.orders : this.store.tables.trips;
     return firstFree([...rows.values()].map((row) => row.number), kind === 'order' ? 'CF-' : 'R-');

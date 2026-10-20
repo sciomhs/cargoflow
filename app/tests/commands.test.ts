@@ -179,3 +179,8 @@ test('задержка: проблема → принятие → новое ETA
   expect(clientNotes[1].body).toBe('Заказ CF-1845: 22 окт, 14:30. Причина: задержка на маршруте');
   expect(clientNotes.some((n) => /дорог/i.test(n.body ?? ''))).toBe(false);
 });
+
+test('сдвиг ETA: 13:00 + 90 мин = 14:30, клиентская карточка без служебных событий', async () => {
+  const { shiftedEta } = await import('../src/features/attention/eta');
+  expect(new Date(shiftedEta('2026-10-22T13:00:00+05:00', 90)).toISOString()).toBe(new Date('2026-10-22T14:30:00+05:00').toISOString());
+});

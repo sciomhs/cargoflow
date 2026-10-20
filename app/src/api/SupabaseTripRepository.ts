@@ -83,6 +83,13 @@ export class SupabaseTripRepository implements TripRepository {
     };
   }
 
+  async listProblems() {
+    const { data, error } = await this.client.from('trip_problems').select('*, trip:trips!inner(*, order:orders!inner(*))')
+      .order('created_at', { ascending: false });
+    if (error) throw new RepositoryError('unavailable');
+    return data;
+  }
+
   async nextNumber(kind: 'order' | 'trip') {
     const { data, error } = kind === 'order' ? await this.client.from('orders').select('number') : await this.client.from('trips').select('number');
     if (error) throw new RepositoryError('unavailable');

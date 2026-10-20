@@ -13,6 +13,7 @@ export type TripDetail = Trip & {
   handover: Row<'handovers'> | null;
 };
 export type TripFilter = { date?: string };
+export type ProblemWithTrip = Row<'trip_problems'> & { trip: Trip };
 export type OrderWithTrip = Row<'orders'> & { trip: Row<'trips'> | null; client_name: string };
 export type AssignmentOptions = {
   drivers: (Pick<Row<'profiles'>, 'id' | 'full_name'> & { active_trips: number })[];
@@ -29,6 +30,7 @@ export interface TripRepository {
   markRead(id: string): Promise<void>;
   assignmentOptions(): Promise<AssignmentOptions>;
   nextNumber(kind: 'order' | 'trip'): Promise<string>;
+  listProblems(): Promise<ProblemWithTrip[]>;
   apply(command: Command): Promise<void>;
 }
 
