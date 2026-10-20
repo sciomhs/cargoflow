@@ -34,3 +34,13 @@ test('дата показывается по времени Алматы, нек
   expect(dateTime('2026-10-21T09:30:00Z')).toBe('21 окт, 14:30');
   expect(dateTime('bad')).toBe('Время не указано');
 });
+
+test('дашборд руководителя на исходных данных: 486 / 421 / 37 / 12 / 4 / 14,5 ч', async () => {
+  const { monthStats } = await import('../src/features/manager/stats');
+  const { DemoStore } = await import('../src/demo/store');
+  const { memoryStorage } = await import('../src/demo/persist');
+  const trips = await new DemoTripRepository(demoUser('manager'), new DemoStore(memoryStorage())).listForDispatcher();
+  const stats = monthStats(trips);
+  expect([stats.total, stats.completed, stats.inTransit, stats.delayed, stats.cancelled]).toEqual([486, 421, 37, 12, 4]);
+  expect(stats.averageHours).toBe(14.5);
+});
