@@ -1,4 +1,4 @@
-appId: host.exp.Exponent
+appId: ${APP_ID}
 ---
 - runFlow: { file: _login.yaml, env: { ROLE: "Водитель" } }
 - tapOn: "Открыть рейс"
@@ -18,7 +18,7 @@ appId: host.exp.Exponent
 - swipe: { start: "50%, 40%", end: "50%, 30%", duration: 300 }
 - scrollUntilVisible: { element: "Из галереи", visibilityPercentage: 80 }
 - tapOn: { text: "Из галереи", index: 0 }
-- extendedWaitUntil: { notVisible: "Loading.*", timeout: 30000 }
+- extendedWaitUntil: { visible: "Photos", timeout: 30000 }
 - waitForAnimationToEnd
 - tapOn: { point: "50%,25%" }
 - extendedWaitUntil: { visible: "Переснять", timeout: 20000 }
@@ -30,7 +30,7 @@ appId: host.exp.Exponent
 - scrollUntilVisible: { element: "Фото накладной", visibilityPercentage: 80 }
 - scrollUntilVisible: { element: { text: "Из галереи", index: 1 }, visibilityPercentage: 80 }
 - tapOn: { text: "Из галереи", index: 1 }
-- extendedWaitUntil: { notVisible: "Loading.*", timeout: 30000 }
+- extendedWaitUntil: { visible: "Photos", timeout: 30000 }
 - waitForAnimationToEnd
 - tapOn: { point: "84%,25%" }
 - waitForAnimationToEnd

@@ -1,4 +1,4 @@
-appId: host.exp.Exponent
+appId: ${APP_ID}
 ---
 - tapOn: { point: "16%,25%" }
 - extendedWaitUntil: { visible: "Переснять", timeout: 20000 }

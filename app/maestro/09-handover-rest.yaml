@@ -1,0 +1,33 @@
+appId: ${APP_ID}
+---
+- tapOn: { point: "50%,25%" }
+- extendedWaitUntil: { visible: "Переснять", timeout: 20000 }
+- scrollUntilVisible: { element: { id: "handover-waybill" }, visibilityPercentage: 60 }
+- tapOn: { id: "handover-waybill" }
+- waitForAnimationToEnd
+- inputText: "457"
+- swipe: { start: "50%, 40%", end: "50%, 30%", duration: 300 }
+- scrollUntilVisible: { element: "Фото накладной", visibilityPercentage: 80 }
+- scrollUntilVisible: { element: { text: "Из галереи", index: 1 }, visibilityPercentage: 80 }
+- tapOn: { text: "Из галереи", index: 1 }
+- extendedWaitUntil: { visible: "Photos", timeout: 30000 }
+- waitForAnimationToEnd
+- tapOn: { point: "84%,25%" }
+- waitForAnimationToEnd
+- takeScreenshot: ../screenshots/T-11-handover
+- scrollUntilVisible: { element: "Груз передан" }
+- tapOn: "Груз передан"
+- extendedWaitUntil: { visible: "Груз передан. Ждём подтверждения получения", timeout: 15000 }
+- takeScreenshot: ../screenshots/T-11-awaiting
+- runFlow: { file: _login.yaml, env: { ROLE: "Клиент" } }
+- tapOn: "CF-1845.*"
+- extendedWaitUntil: { visible: "Подтвердить получение", timeout: 15000 }
+- takeScreenshot: ../screenshots/T-12-confirm
+- tapOn: "Подтвердить получение"
+- extendedWaitUntil: { visible: "Доставка подтверждена", timeout: 15000 }
+- runFlow: { file: _login.yaml, env: { ROLE: "Диспетчер" } }
+- tapOn: "Завершены"
+- tapOn: ".*R-642.*"
+- extendedWaitUntil: { visible: "Завершён", timeout: 15000 }
+- assertVisible: "Получатель: Алексей Смирнов"
+- takeScreenshot: ../screenshots/T-12-dispatcher-completed

@@ -1,0 +1,5 @@
+appId: ${APP_ID}
+---
+- tapOn: { text: "Завершены", index: 1 }
+- tapOn: ".*R-642.*"
+- extendedWaitUntil: { visible: "Завершён", timeout: 15000 }

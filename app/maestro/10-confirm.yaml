@@ -1,0 +1,15 @@
+appId: ${APP_ID}
+---
+- scrollUntilVisible: { element: "Груз передан" }
+- tapOn: "Груз передан"
+- extendedWaitUntil: { visible: "Груз передан. Ждём подтверждения получения", timeout: 15000 }
+- runFlow: { file: _login.yaml, env: { ROLE: "Клиент" } }
+- tapOn: "CF-1845.*"
+- extendedWaitUntil: { visible: "Подтвердить получение", timeout: 15000 }
+- tapOn: "Подтвердить получение"
+- extendedWaitUntil: { visible: "Доставка подтверждена", timeout: 15000 }
+- runFlow: { file: _login.yaml, env: { ROLE: "Диспетчер" } }
+- tapOn: "Завершены"
+- tapOn: ".*R-642.*"
+- extendedWaitUntil: { visible: "Завершён", timeout: 15000 }
+- assertVisible: "Получатель: Алексей Смирнов"

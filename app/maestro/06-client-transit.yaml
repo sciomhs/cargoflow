@@ -1,4 +1,4 @@
-appId: host.exp.Exponent
+appId: ${APP_ID}
 ---
 - runFlow: { file: _login.yaml, env: { ROLE: "Клиент" } }
 - tapOn: "CF-1845.*"

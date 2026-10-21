@@ -1,4 +1,4 @@
-appId: host.exp.Exponent
+appId: ${APP_ID}
 ---
 - openLink: exp://127.0.0.1:8084
 - extendedWaitUntil: { visible: "Войти", timeout: 240000 }
