@@ -1,0 +1,6 @@
+appId: ${APP_ID}
+---
+- tapOn: "Прибыл на выгрузку"
+- extendedWaitUntil: { visible: "Нет сети. Действие сохранено и отправится автоматически", timeout: 60000 }
+- tapOn: "Начать разгрузку"
+- extendedWaitUntil: { visible: "2 действия ожидают отправки", timeout: 30000 }

@@ -10,6 +10,7 @@ import { useTheme } from '@/ui/theme';
 import { radius, spacing } from '@/ui/tokens';
 import { statusPresentation } from '../trips/presentation';
 import { driverQueue } from './presentation';
+import { OutboxBanner } from '@/outbox/useOutbox';
 
 export default function Today() {
   const user = useUser();
@@ -25,6 +26,7 @@ export default function Today() {
   const [current, ...next] = data.trips;
   const open = (id: string) => router.push({ pathname: '/(driver)/trips/[id]', params: { id } });
   return <ScrollView className="flex-1 bg-background" contentContainerStyle={{ padding: spacing.lg, gap: spacing.xxl, paddingBottom: insets.bottom + spacing.xl }}>
+    <OutboxBanner />
     {data.notifications.length > 0 && <Section title="Новое">
       {data.notifications.map((item) => <Row key={item.id} label={item.title} detail={item.body ?? undefined}
         onPress={() => { void data.markRead(item.id); if (item.trip_id) open(item.trip_id); }} />)}

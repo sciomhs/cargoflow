@@ -1,0 +1,11 @@
+appId: ${APP_ID}
+---
+- extendedWaitUntil: { visible: "Вход по логину", timeout: 60000 }
+- tapOn: "Вход по логину"
+- extendedWaitUntil: { visible: "Пароль", timeout: 10000 }
+- scrollUntilVisible: { element: "Водитель: Асхат Нуртаев.*" }
+- tapOn: "Водитель: Асхат Нуртаев.*"
+- scrollUntilVisible: { element: "Войти", direction: UP }
+- tapOn: "Войти"
+- extendedWaitUntil: { visible: "2 действия ожидают отправки|Открыть рейс", timeout: 30000 }
+- extendedWaitUntil: { notVisible: ".*ожида.* отправки", timeout: 60000 }

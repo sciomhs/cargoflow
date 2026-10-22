@@ -10,6 +10,7 @@ import { spacing } from '@/ui/tokens';
 import { statusPresentation, timelineSteps } from '../trips/presentation';
 import { driverStep } from './presentation';
 import { RouteMap } from '../map/RouteMap';
+import { OutboxBanner, useOptimisticTrip } from '@/outbox/useOutbox';
 
 function Contact({ title, city, address, name, phone }: { title: string; city: string; address: string; name: string | null; phone: string | null }) {
   return <Section title={title}>
@@ -22,7 +23,8 @@ function Contact({ title, city, address, name, phone }: { title: string; city: s
 export default function DriverTrip() {
   const params = useLocalSearchParams<{ id?: string }>();
   const id = typeof params.id === 'string' ? params.id : '';
-  const { data: trip, error, notFound, retry } = useLoad((repo) => repo.get(id), `driver-trip:${id}`);
+  const { data: serverTrip, error, notFound, retry } = useLoad((repo) => repo.get(id), `driver-trip:${id}`);
+  const trip = useOptimisticTrip(serverTrip);
   const action = useAction();
   const insets = useSafeAreaInsets();
   if (error) return <View className="flex-1 bg-background px-4"><EmptyState label={error} action={notFound
@@ -44,6 +46,7 @@ export default function DriverTrip() {
         <Text size="title">{trip.order.pickup_city} → {trip.order.delivery_city}</Text>
         <StatusChip {...statusPresentation(trip)} />
       </View>
+      <OutboxBanner tripId={trip.id} />
       <RouteMap from={trip.order.pickup_city} to={trip.order.delivery_city} status={trip.status} height={180} />
       <Section title="Груз">
         <Row label={trip.order.cargo_name} detail={`${kilograms(trip.order.weight_kg)}${trip.order.places ? ` · ${trip.order.places} ${trip.order.places_unit ?? 'мест'}` : ''}`} detailMono />
@@ -64,6 +67,7 @@ export default function DriverTrip() {
     </ScrollView>
     <View style={{ paddingHorizontal: spacing.lg, paddingTop: spacing.md, paddingBottom: insets.bottom + spacing.md, gap: spacing.sm }}>
       <FormError message={action.error} />
+      {action.notice && <Text size="small" tone="waiting" accessibilityLiveRegion="polite">{action.notice}</Text>}
       {step.kind === 'wait' ? <Text tone="muted" accessibilityLiveRegion="polite">{step.label}</Text>
         : <Button variant="driver-xl" label={action.pending ? 'Сохраняем…' : step.label} hint={step.hint} disabled={action.pending} onPress={press} />}
     </View>

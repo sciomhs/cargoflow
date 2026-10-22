@@ -6,6 +6,7 @@ import type { Command, CommandBody } from '@/domain/commands';
 import { RepositoryError, type TripRepository } from '@/domain/TripRepository';
 import { demoUser } from '@/demo/data';
 import { demoStore } from '@/demo/store';
+import { OFFLINE_KINDS, outbox } from '@/outbox/queue';
 import { useSession } from '@/store/session';
 import { useSettings } from '@/store/settings';
 import { tripRepository } from './repository';
@@ -30,6 +31,7 @@ export function useLoad<T>(load: (repo: TripRepository) => Promise<T>, key: stri
   const loadRef = useRef(load);
   useEffect(() => { loadRef.current = load; });
   useEffect(() => demoStore().subscribe(() => setVersion((value) => value + 1)), []);
+  useEffect(() => outbox().subscribe(() => setVersion((value) => value + 1)), []);
   useFocusEffect(useCallback(() => { setVersion((value) => value + 1); }, []));
   useEffect(() => {
     let active = true;
@@ -44,23 +46,40 @@ export function useLoad<T>(load: (repo: TripRepository) => Promise<T>, key: stri
 }
 
 // One submission = one action id, reused on retry so a repeated request cannot create a duplicate.
+// In server mode a driver action that hits a network error waits in the device outbox instead of failing.
 export function useAction() {
   const getRepo = useRepository();
   const demoMode = useSettings((state) => state.demoMode);
   const busy = useRef(false);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string>();
+  const [notice, setNotice] = useState<string>();
   const run = useCallback(async (body: CommandBody, actionId: string = randomUUID()) => {
     if (busy.current) return false;
     busy.current = true;
     setPending(true);
     setError(undefined);
+    setNotice(undefined);
+    const at = demoMode ? demoStore().nextAt() : new Date().toISOString();
+    const command = { ...body, action_id: actionId, at } as Command;
+    const queueable = !demoMode && OFFLINE_KINDS.includes(command.kind);
     try {
       const repo = await getRepo();
-      const at = demoMode ? demoStore().nextAt() : new Date().toISOString();
-      await repo.apply({ ...body, action_id: actionId, at } as Command);
+      if (queueable && outbox().items().length) {
+        // Keep order: while earlier actions wait, new ones queue behind them.
+        outbox().enqueue(command);
+        setNotice('Действие сохранено и отправится после предыдущих');
+        void outbox().flush((queued) => repo.apply(queued));
+        return true;
+      }
+      await repo.apply(command);
       return true;
     } catch (failure) {
+      if (queueable && failure instanceof RepositoryError && failure.code === 'unavailable') {
+        outbox().enqueue(command);
+        setNotice('Нет сети. Действие сохранено и отправится автоматически');
+        return true;
+      }
       setError((failure as Error).message);
       return false;
     } finally {
@@ -68,7 +87,7 @@ export function useAction() {
       setPending(false);
     }
   }, [getRepo, demoMode]);
-  return { run, pending, error, setError };
+  return { run, pending, error, setError, notice };
 }
 
 export function useActionId() {
