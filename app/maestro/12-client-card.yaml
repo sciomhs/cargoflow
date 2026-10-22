@@ -1,0 +1,8 @@
+appId: ${APP_ID}
+---
+- extendedWaitUntil: { visible: "Войти|Сменить роль", timeout: 60000 }
+- runFlow: { when: { visible: "Сменить роль" }, commands: [ { tapOn: { point: "76%,9%" } } ] }
+- tapOn: "Клиент.*"
+- tapOn: "Войти"
+- tapOn: "CF-1845.*"
+- extendedWaitUntil: { visible: "Заказ №CF-1845", timeout: 15000 }

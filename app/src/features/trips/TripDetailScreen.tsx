@@ -11,6 +11,7 @@ import { Button, Field, Text, Row, StatusChip, Timeline, EmptyState, Skeleton } 
 import { Thumbnails } from '../media/PhotoPicker';
 import { mediaUri } from '../media/photos';
 import { stageLabels } from '../driver/TripPhotos';
+import { RouteMap } from '../map/RouteMap';
 import { spacing } from '@/ui/tokens';
 import { dateTime, statusPresentation, timelineSteps } from './presentation';
 
@@ -32,6 +33,7 @@ export default function TripDetailScreen() {
         <Text size="title">{trip.order.pickup_city} → {trip.order.delivery_city}</Text>
         <StatusChip {...statusPresentation(trip)} />
       </View>
+      <RouteMap from={trip.order.pickup_city} to={trip.order.delivery_city} status={trip.status} height={200} />
       <DispatcherActions trip={trip} />
       <Section title="Назначение">
         <Row label={trip.driver?.full_name ?? 'Водитель не указан'} />

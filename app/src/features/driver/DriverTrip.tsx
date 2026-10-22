@@ -9,6 +9,7 @@ import { Button, EmptyState, Row, Skeleton, StatusChip, Text, Timeline } from '@
 import { spacing } from '@/ui/tokens';
 import { statusPresentation, timelineSteps } from '../trips/presentation';
 import { driverStep } from './presentation';
+import { RouteMap } from '../map/RouteMap';
 
 function Contact({ title, city, address, name, phone }: { title: string; city: string; address: string; name: string | null; phone: string | null }) {
   return <Section title={title}>
@@ -43,6 +44,7 @@ export default function DriverTrip() {
         <Text size="title">{trip.order.pickup_city} → {trip.order.delivery_city}</Text>
         <StatusChip {...statusPresentation(trip)} />
       </View>
+      <RouteMap from={trip.order.pickup_city} to={trip.order.delivery_city} status={trip.status} height={180} />
       <Section title="Груз">
         <Row label={trip.order.cargo_name} detail={`${kilograms(trip.order.weight_kg)}${trip.order.places ? ` · ${trip.order.places} ${trip.order.places_unit ?? 'мест'}` : ''}`} detailMono />
         <Row label="Машина" detail={trip.vehicle ? `${trip.vehicle.make_model} · ${trip.vehicle.plate}` : 'Не указана'} detailMono />

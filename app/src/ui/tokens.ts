@@ -1,15 +1,15 @@
 export const palettes = {
   light: {
-    background: '#F4F2EE', surface: '#FFFFFF', text: '#1A1917', muted: '#5E5A54',
-    border: '#DCD8D0', pressed: '#E9E5DD', accent: '#1F6F4A', accentText: '#1F6F4A',
-    onAccent: '#FFFFFF', destructive: '#B4411F', onDestructive: '#FFFFFF',
-    delay: '#B4411F', waiting: '#8A6D1F', completed: '#4E7A5F',
+    background: '#F5F4FA', surface: '#FFFFFF', text: '#1C1A29', muted: '#5F5B72',
+    border: '#E4E1EF', pressed: '#EEEBFA', accent: '#5B3FE0', accentText: '#5B3FE0',
+    onAccent: '#FFFFFF', destructive: '#C2391E', onDestructive: '#FFFFFF',
+    delay: '#C2391E', waiting: '#8A6A12', completed: '#2F8A5B', tint: '#EEEAFE',
   },
   dark: {
-    background: '#141311', surface: '#1E1C19', text: '#F4F2EE', muted: '#B7B0A6',
-    border: '#443F38', pressed: '#2A2722', accent: '#1F6F4A', accentText: '#8ABF9E',
-    onAccent: '#FFFFFF', destructive: '#B4411F', onDestructive: '#FFFFFF',
-    delay: '#E79479', waiting: '#D5B45F', completed: '#91B19A',
+    background: '#14121C', surface: '#1F1C2B', text: '#F4F2FA', muted: '#B4AFC6',
+    border: '#3A3550', pressed: '#2A2638', accent: '#5B3FE0', accentText: '#B9AAFF',
+    onAccent: '#FFFFFF', destructive: '#C2391E', onDestructive: '#FFFFFF',
+    delay: '#F0957C', waiting: '#D9B65A', completed: '#7FCFA2', tint: '#2B2550',
   },
 } as const;
 
@@ -29,7 +29,8 @@ export const typeScale = {
 } as const;
 
 export const spacing = { xs: 4, sm: 8, md: 12, lg: 16, xl: 24, xxl: 32 } as const;
-export const radius = 6;
+export const radius = 12;
+export const cardRadius = 16;
 export const touch = { normal: 48, driver: 56, driverAction: 64 } as const;
 export const icon = { size: 20, strokeWidth: 1.75 } as const;
 

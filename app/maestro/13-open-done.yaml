@@ -1,0 +1,5 @@
+appId: ${APP_ID}
+---
+- tapOn: "Завершённые"
+- tapOn: "CF-1845.*"
+- extendedWaitUntil: { visible: "Заказ №CF-1845", timeout: 15000 }

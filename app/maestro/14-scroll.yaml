@@ -1,0 +1,5 @@
+appId: ${APP_ID}
+---
+- scrollUntilVisible: { element: "Маршрут", visibilityPercentage: 100 }
+- swipe: { start: "50%, 70%", end: "50%, 35%", duration: 600 }
+- waitForAnimationToEnd
