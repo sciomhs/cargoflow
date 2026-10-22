@@ -1,0 +1,10 @@
+appId: ${APP_ID}
+---
+- tapOn: "Клиент.*"
+- tapOn: "Войти"
+- tapOn: "Завершённые"
+- tapOn: "CF-1845.*"
+- extendedWaitUntil: { visible: "Заказ №CF-1845", timeout: 15000 }
+- scrollUntilVisible: { element: "Маршрут", visibilityPercentage: 100 }
+- swipe: { start: "50%, 75%", end: "50%, 30%", duration: 700 }
+- waitForAnimationToEnd
