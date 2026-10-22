@@ -10,7 +10,7 @@
 | T-01 | `npx create-expo-app app` (TS, Expo Router), NativeWind, Reanimated, шрифты IBM Plex, lucide, `versions.md`, `expo lint`, `tsc` зелёные. `(auth)/login` с выбором роли (demo). | Sol | Запускается в Expo Go, 4 пустых корневых навигатора по ролям |
 | T-02 | Nav Read → `app/NAV.md` + файлы маршрутов с заголовками (`prompts/01`) | A | Все 22 экрана существуют и открываются, back везде работает |
 | T-03 | Дизайн-система: `MOBILE-DESIGN.md`, токены, 8 примитивов, `(dev)/ui-gallery` (`prompts/01`) | A | Галерея, `tells.md` grep = 0 |
-| T-04 | `supabase/schema.sql` применён, RLS, Storage bucket, `gen types` → `types.ts` (`prompts/02`) | Sol | 3 запроса под 3 ролями дают ожидаемые строки |
+| T-04 | `supabase/migrations/` применён, RLS, Storage bucket, `gen types` → `types.ts` (`prompts/02`) | Sol | 3 запроса под 3 ролями дают ожидаемые строки |
 | T-05 | `statusMachine.ts` + `nextAction` + vitest | Sol | 18 тестов зелёные |
 | T-06 | `TripRepository` интерфейс, `SupabaseTripRepository`, `DemoTripRepository` + seed.json, переключатель demoMode | Sol | Список рейсов диспетчера показывает 27 seed-рейсов в обоих режимах |
 

@@ -50,7 +50,9 @@
     "lint": "expo lint",
     "test": "node --test tests/*.test.mjs && npm run test:domain",
     "test:domain": "vitest run tests/*.test.ts",
-    "test:backend": "RUN_BACKEND=1 vitest run tests/backend.test.ts"
+    "test:backend": "RUN_BACKEND=1 vitest run tests/backend.test.ts",
+    "backend": "cd .. && supabase start && supabase db reset && node setup/local-backend.mjs",
+    "backend:lan": "cd .. && supabase start && supabase db reset && node setup/local-backend.mjs --lan"
   },
   "private": true
 }

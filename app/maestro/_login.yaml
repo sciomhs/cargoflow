@@ -1,8 +1,8 @@
 appId: ${APP_ID}
 ---
 - openLink: exp://127.0.0.1:8084
-- extendedWaitUntil: { visible: "Войти|Сменить роль", timeout: 240000 }
-- runFlow: { when: { visible: "Сменить роль" }, commands: [ { tapOn: { point: "76%,9%" } } ] }
+- extendedWaitUntil: { visible: "Войти|Выйти", timeout: 240000 }
+- runFlow: { when: { visible: "Выйти" }, commands: [ { tapOn: { point: "76%,9%" } } ] }
 - runFlow: { when: { visible: "Reload" }, commands: [ { tapOn: { point: "90%,48%" } }, { tapOn: { point: "76%,9%" } } ] }
 - extendedWaitUntil: { visible: "Войти", timeout: 15000 }
 - tapOn: "${ROLE}.*"

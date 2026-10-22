@@ -1,0 +1,11 @@
+appId: ${APP_ID}
+---
+- extendedWaitUntil: { visible: "Вход по логину", timeout: 240000 }
+- waitForAnimationToEnd
+- tapOn: "Вход по логину"
+- extendedWaitUntil: { visible: "Пароль", timeout: 10000 }
+- scrollUntilVisible: { element: "Диспетчер: Айгерим Нурланова.*" }
+- tapOn: "Диспетчер: Айгерим Нурланова.*"
+- scrollUntilVisible: { element: "Войти", direction: UP }
+- tapOn: "Войти"
+- extendedWaitUntil: { visible: "Рейсов: .*", timeout: 30000 }

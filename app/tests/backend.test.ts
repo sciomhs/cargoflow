@@ -10,6 +10,7 @@ import { DemoTripRepository } from '../src/demo/DemoTripRepository';
 import { DemoStore } from '../src/demo/store';
 import { memoryStorage } from '../src/demo/persist';
 import { data, demoDate, demoUser } from '../src/demo/data';
+import { TEST_PASSWORD } from '../src/api/accounts';
 
 const backend = !!process.env.RUN_BACKEND;
 const env = backend ? Object.fromEntries(readFileSync('.env', 'utf8').trim().split('\n').map((line) => {
@@ -21,10 +22,25 @@ const jpeg = new Uint8Array(Buffer.from('/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP/////
 async function signIn(email: string) {
   const client = createClient<Database>(env.EXPO_PUBLIC_SUPABASE_URL, env.EXPO_PUBLIC_SUPABASE_ANON_KEY,
     { auth: { persistSession: false, autoRefreshToken: false } });
-  const { error } = await client.auth.signInWithPassword({ email, password: env.EXPO_PUBLIC_LOCAL_DEMO_PASSWORD });
+  const { error } = await client.auth.signInWithPassword({ email, password: TEST_PASSWORD });
   expect(error).toBeNull();
   return new SupabaseTripRepository(client, async () => jpeg);
 }
+
+test.skipIf(!backend)('все 7 тестовых учётных записей входят и получают свой профиль; неверный пароль отклоняется', async () => {
+  for (const profile of data.profiles) {
+    const key = profile.role === 'driver' && profile.full_name !== 'Руслан Касымов'
+      ? { 'Асхат Нуртаев': 'askhat', 'Ермек Садыков': 'ermek', 'Бауыржан Омаров': 'bauyrzhan' }[profile.full_name] : profile.role;
+    const client = createClient<Database>(env.EXPO_PUBLIC_SUPABASE_URL, env.EXPO_PUBLIC_SUPABASE_ANON_KEY, { auth: { persistSession: false } });
+    const { data: session, error } = await client.auth.signInWithPassword({ email: `${key}@cargoflow.test`, password: TEST_PASSWORD });
+    expect(error, `${key}`).toBeNull();
+    const { data: own } = await client.from('profiles').select('id, role').eq('id', session.user!.id).single();
+    expect(own).toEqual({ id: profile.id, role: profile.role });
+  }
+  const client = createClient<Database>(env.EXPO_PUBLIC_SUPABASE_URL, env.EXPO_PUBLIC_SUPABASE_ANON_KEY, { auth: { persistSession: false } });
+  const { error } = await client.auth.signInWithPassword({ email: 'dispatcher@cargoflow.test', password: 'wrong-password' });
+  expect(error?.status).toBe(400);
+});
 
 for (const role of ['dispatcher', 'driver', 'client', 'manager'] as const) {
   test.skipIf(!backend)(`Auth + RLS + parity: ${role}`, async () => {

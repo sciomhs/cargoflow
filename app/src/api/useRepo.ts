@@ -77,5 +77,6 @@ export function useActionId() {
 
 export function useUser() {
   const role = useSession((state) => state.role);
-  return role ? demoUser(role) : null;
+  const account = useSession((state) => state.account);
+  return account ?? (role ? demoUser(role) : null);
 }

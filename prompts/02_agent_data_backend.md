@@ -5,7 +5,7 @@
 Зона ответственности: `supabase/`, `src/api/`, `src/demo/`, `src/domain/`, `src/outbox/`.
 
 Правила:
-- Источник истины — `docs/03_data_model.md` и `supabase/schema.sql`. Типы в `src/domain/types.ts`
+- Источник истины — `docs/03_data_model.md` и `supabase/migrations/`. Типы в `src/domain/types.ts`
   генерируются из схемы (`supabase gen types typescript`), руками не правятся.
 - `statusMachine.ts`: функции `canTransition(from, to)`, `nextAction(status)`,
   `requiredAttachments(to)`. Покрыть unit-тестами (vitest) — все 13 переходов и 5 запрещённых.

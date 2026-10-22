@@ -3,6 +3,7 @@ import { Header } from 'expo-router/react-navigation';
 import { Settings } from 'lucide-react-native';
 import { Pressable, View } from 'react-native';
 
+import { signOutServer } from '@/api/repository';
 import { useSession } from '@/store/session';
 import { Text } from '@/ui';
 import { useTheme } from '@/ui/theme';
@@ -14,8 +15,8 @@ function SwitchRole() {
     <Pressable
       cssInterop={false}
       accessibilityRole="button"
-      accessibilityLabel="Сменить роль"
-      onPress={signOut}
+      accessibilityLabel="Выйти"
+      onPress={() => { void signOutServer(); signOut(); }}
       style={({ pressed }) => ({
         minHeight: touch.driver,
         justifyContent: 'center',
@@ -23,7 +24,7 @@ function SwitchRole() {
         opacity: pressed ? 0.5 : 1,
       })}>
       <Text maxFontSizeMultiplier={1.3} size="small">
-        Сменить роль
+        Выйти
       </Text>
     </Pressable>
   );
