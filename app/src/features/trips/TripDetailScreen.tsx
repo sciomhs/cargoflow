@@ -12,6 +12,7 @@ import { Thumbnails } from '../media/PhotoPicker';
 import { mediaUri } from '../media/photos';
 import { stageLabels } from '../driver/TripPhotos';
 import { RouteMap } from '../map/RouteMap';
+import { ExportButton } from '../report/ExportButton';
 import { spacing } from '@/ui/tokens';
 import { dateTime, statusPresentation, timelineSteps } from './presentation';
 
@@ -35,6 +36,7 @@ export default function TripDetailScreen() {
       </View>
       <RouteMap from={trip.order.pickup_city} to={trip.order.delivery_city} status={trip.status} height={200} />
       <DispatcherActions trip={trip} />
+      <ExportButton trip={trip} />
       <Section title="Назначение">
         <Row label={trip.driver?.full_name ?? 'Водитель не указан'} />
         <Row label={trip.vehicle?.make_model ?? 'Машина не указана'} detail={trip.vehicle?.plate} detailMono />

@@ -12,6 +12,7 @@ import { cardRadius, spacing } from '@/ui/tokens';
 import { mediaUri } from '../media/photos';
 import { stageLabels } from '../driver/TripPhotos';
 import { RouteMap } from '../map/RouteMap';
+import { ExportButton } from '../report/ExportButton';
 import { statusPresentation, timelineSteps } from '../trips/presentation';
 import { clientNextStage, loadedAt } from './presentation';
 
@@ -77,5 +78,6 @@ export default function Delivery() {
       <RouteMap from={trip.order.pickup_city} to={trip.order.delivery_city} status={trip.status} />
       <Timeline steps={timelineSteps(trip)} />
     </Card>
+    <ExportButton trip={trip} />
   </ScrollView>;
 }

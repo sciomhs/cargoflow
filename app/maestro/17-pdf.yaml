@@ -1,0 +1,6 @@
+appId: ${APP_ID}
+---
+- tapOn: ".*R-616.*"
+- extendedWaitUntil: { visible: "Акт рейса \\(PDF\\)", timeout: 20000 }
+- tapOn: "Акт рейса \\(PDF\\)"
+- waitForAnimationToEnd

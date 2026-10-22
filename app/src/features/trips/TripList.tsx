@@ -12,7 +12,12 @@ import { counts, filterTrips, segments, statusPresentation, dateTime, type Segme
 
 export default function TripList() {
   const demoMode = useSettings((state) => state.demoMode);
-  const { data: trips, error, retry } = useLoad((repo) => repo.listForDispatcher({ date: demoDate }), 'dispatcher-trips');
+  const loaded = useLoad(async (repo) => {
+    const [list, options] = await Promise.all([repo.listForDispatcher({ date: demoDate }), repo.assignmentOptions()]);
+    return { list, drivers: new Map(options.drivers.map((driver) => [driver.id, driver.full_name])) };
+  }, 'dispatcher-trips');
+  const { error, retry } = loaded;
+  const trips = loaded.data?.list;
   const [segment, setSegment] = useState<Segment>('all');
   const insets = useSafeAreaInsets();
   const current = { trips, error };
@@ -42,7 +47,7 @@ export default function TripList() {
       ListEmptyComponent={current.error ? <EmptyState label={current.error} action={{ label: 'Повторить', onPress: retry }} />
         : current.trips ? <EmptyState label="Рейсов в этом разделе нет" /> : <Skeleton />}
       renderItem={({ item }) => <Row label={`${item.order.pickup_city} → ${item.order.delivery_city}`}
-        detail={`${item.number} · ${dateTime(item.current_planned_delivery_at)}`} detailMono
+        detail={`${item.number} · ${loaded.data?.drivers.get(item.driver_id) ?? ''} · ${dateTime(item.current_planned_delivery_at)}`}
         trailing={<StatusChip {...statusPresentation(item)} />}
         onPress={() => router.push({ pathname: '/(dispatcher)/trips/[id]', params: { id: item.id } })} />}
     />

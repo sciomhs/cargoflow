@@ -28,7 +28,8 @@
           "photosPermission": "CargoFlow прикрепляет фото груза и документов к рейсу.",
           "cameraPermission": "CargoFlow снимает груз и документы на этапах рейса."
         }
-      ]
+      ],
+      "expo-sharing"
     ],
     "experiments": {
       "typedRoutes": true
